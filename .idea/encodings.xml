@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/RPC_mini/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/RPC_mini/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/commonMini/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/commonMini/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/consumerMini/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/consumerMini/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/miniRPC/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/miniRPC/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/providerMini/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/providerMini/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
