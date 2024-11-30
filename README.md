@@ -67,7 +67,7 @@
 
 ![image](https://github.com/fearlesslyh/RpcMini/blob/main/photo/1732977939424.png)
 
-![image-20241130224626660](C:\Users\RAOYAO\AppData\Roaming\Typora\typora-user-images\image-20241130224626660.png)
+![image](https://github.com/fearlesslyh/RpcMini/blob/main/photo/1732977964545.png)
 
 ### 故障和错误
 
