@@ -47,7 +47,7 @@
 
 ### 目录
 
-![image-20241130223947576](C:\Users\RAOYAO\AppData\Roaming\Typora\typora-user-images\image-20241130223947576.png)
+![image](https://github.com/fearlesslyh/RpcMini/blob/main/photo/1732977584041.png)
 
 1. commonMini 公共模块
 2. consumerMini 服务消费者模块
