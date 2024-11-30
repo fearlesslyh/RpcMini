@@ -65,7 +65,7 @@
 
 服务提供者和消费者都要启动
 
-![image-20241130224547720](C:\Users\RAOYAO\AppData\Roaming\Typora\typora-user-images\image-20241130224547720.png)
+![image](https://github.com/fearlesslyh/RpcMini/blob/main/photo/1732977939424.png)
 
 ![image-20241130224626660](C:\Users\RAOYAO\AppData\Roaming\Typora\typora-user-images\image-20241130224626660.png)
 
