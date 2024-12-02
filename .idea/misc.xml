@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/providerMini/pom.xml" />
         <option value="$PROJECT_DIR$/RPC_mini/pom.xml" />
         <option value="$PROJECT_DIR$/miniRPC/pom.xml" />
+        <option value="$PROJECT_DIR$/NewMiniRPC/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
