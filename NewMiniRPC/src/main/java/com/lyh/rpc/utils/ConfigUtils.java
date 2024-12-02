@@ -7,10 +7,36 @@ import cn.hutool.setting.dialect.Props;
  * @author 梁懿豪
  * @version 1.0
  */
+//读取配置文件，并且返回配置的对象，可以简化调用
+
+/**
+ * utils应当通用，不要和业务相关，提高使用的灵活性，支持外层读取配置文件的前缀prefix
+ */
+
+/**
+ * 配置工具类
+ */
 public class ConfigUtils {
+    /**
+     * 加载配置对象
+     * @param tClass
+     * @param prefix
+     * @return
+     * @param <T>
+     */
     public static <T> T loadConfig(Class<T> tClass, String prefix){
         return loadConfig(tClass,prefix, "");
     }
+
+    /**
+     * 加载配置对象，并区分环境
+     *
+     * @param tClass
+     * @param prefix
+     * @param environment
+     * @return
+     * @param <T>
+     */
     public static <T> T loadConfig(Class<T> tClass, String prefix, String environment){
         StringBuilder configFileBuilder = new StringBuilder("application");
         if (StrUtil.isNotBlank(environment)) {

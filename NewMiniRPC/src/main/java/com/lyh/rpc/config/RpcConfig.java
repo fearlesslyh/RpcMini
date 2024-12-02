@@ -6,6 +6,10 @@ import lombok.Data;
  * @author 梁懿豪
  * @version 1.0
  */
+
+/**
+ * 保存配置信息，RPC框架配置
+ */
 @Data
 public class RpcConfig {
 // 定义RPC框架的名称
