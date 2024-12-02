@@ -51,7 +51,7 @@
 
 1. commonMini 公共模块
 2. consumerMini 服务消费者模块
-3. miniRPC 简易RPC
+3. NewMiniRPC RPC部分
 4. providerMini 服务提供者模块
 
 ### 项目依赖
@@ -77,6 +77,8 @@
 
 ## 后续
 
-版本为1.0版本，手搓代码出来的，会不断维护和更新。
+版本为1.2版本，手搓代码出来的，会不断维护和更新。
+
+目前添加了可以读取全局配置的模块
 
 如有任何问题或建议，请联系liangyihao@proton.me
