@@ -11,5 +11,13 @@ import com.lyh.mini.common.model.User;
  * 获取用户
  */
 public interface UserService {
+    /**
+     * 获取用户
+     * @param user 用户
+     * @return 无
+     */
     User getUser(User user);
+    default short getNumber(){
+        return 1;
+    };
 }

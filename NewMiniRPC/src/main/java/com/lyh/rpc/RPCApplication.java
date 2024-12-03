@@ -27,9 +27,12 @@ public class RPCApplication {
      * 框架初始化，支持传入自定义的配置
      * @param newRpcConfig 自定义的 RPC 配置
      */
+    // 初始化RPC配置
     public static void initialize(RpcConfig newRpcConfig){
+        // 将传入的RPC配置赋值给全局变量
         rpcConfig=newRpcConfig;
-        log.info("RPC启动，config={}",newRpcConfig.toString());
+        // 打印日志，记录RPC启动信息
+        log.info("RPC启动，配置为 {}",newRpcConfig.toString());
     }
 
 
@@ -37,6 +40,7 @@ public class RPCApplication {
     /**
      * 整体的初始化
      */
+    // 初始化方法
     public static void initialize(){
         RpcConfig newRpcConfig;
         try{
@@ -56,14 +60,20 @@ public class RPCApplication {
      *
      * @return 返回全局唯一的 RpcConfig 实例
      */
-    public static RpcConfig getInstance() {
+    // 获取RpcConfig实例
+   public static RpcConfig getInstance() {
+        // 如果rpcConfig为空
         if (rpcConfig == null) {
+            // 同步RpcConfig.class
             synchronized (RpcConfig.class) {
+                // 如果rpcConfig为空
                 if (rpcConfig == null) {
+                    // 初始化
                     initialize();
                 }
             }
         }
+        // 返回rpcConfig
         return rpcConfig;
     }
 

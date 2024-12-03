@@ -26,5 +26,7 @@ public class consumerExample {
         }else {
             System.out.println("用户不存在");
         }
+        long number = userService.getNumber();
+        System.out.println(number);
     }
 }

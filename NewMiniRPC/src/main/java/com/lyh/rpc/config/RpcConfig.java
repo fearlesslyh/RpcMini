@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 public class RpcConfig {
-// 定义RPC框架的名称
+    // 定义RPC框架的名称
     private String name = "miniRPC";
 
     // 定义RPC框架的版本
@@ -24,4 +24,6 @@ public class RpcConfig {
     // 定义服务器的端口号
     private Integer serverPort = 8080;
 
+    //模拟调用
+    private boolean mock = false;
 }
