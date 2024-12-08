@@ -1,10 +1,12 @@
 package com.lyh.rpc.server;
 
+import com.lyh.rpc.RPCApplication;
 import com.lyh.rpc.model.RpcRequest;
 import com.lyh.rpc.model.RpcResponse;
 import com.lyh.rpc.registry.LocalRegistry;
 import com.lyh.rpc.serializer.JDKserializer;
 import com.lyh.rpc.serializer.Serializer;
+import com.lyh.rpc.serializer.SerializerFactory;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
@@ -23,7 +25,8 @@ import java.lang.reflect.Method;
  */
 public class HttpServerHandler implements Handler<HttpServerRequest> {
     public void handle(HttpServerRequest request) {
-        final Serializer serializer = new JDKserializer();
+// 指定序列化器
+        final Serializer serializer = SerializerFactory.getSerializer(RPCApplication.getInstance().getSerializer());
         System.out.println("收到请求 " + request.method() + " " + request.uri());
         request.bodyHandler(body -> {
             byte[] bytes = body.getBytes();
