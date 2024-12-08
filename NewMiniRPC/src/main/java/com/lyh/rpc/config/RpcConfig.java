@@ -1,5 +1,7 @@
 package com.lyh.rpc.config;
 
+import com.lyh.rpc.serializer.SerializerCommons;
+import com.lyh.rpc.serializer.SerializerFactory;
 import lombok.Data;
 
 /**
@@ -26,4 +28,8 @@ public class RpcConfig {
 
     //模拟调用
     private boolean mock = false;
+
+    //序列化器
+    private String Serializer = SerializerCommons.JDK;
+
 }
