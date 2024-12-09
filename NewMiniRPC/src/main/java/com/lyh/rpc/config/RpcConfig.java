@@ -32,4 +32,6 @@ public class RpcConfig {
     //序列化器
     private String Serializer = SerializerCommons.JDK;
 
+    private RegistryConfig registryConfig = new RegistryConfig();
+
 }

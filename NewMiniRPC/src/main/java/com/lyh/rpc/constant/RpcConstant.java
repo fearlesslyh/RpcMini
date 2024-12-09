@@ -10,4 +10,6 @@ public interface RpcConstant {
      * 用于标识配置文件中的 RPC 相关配置项
      */
     String DEFAULT_CONFIG_PREFIX="RPC";
+
+    String DEFAULT_VERSION="1.0";
 }

@@ -1,5 +1,6 @@
 package com.lyh.rpc.model;
 
+import com.lyh.rpc.constant.RpcConstant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,5 +47,7 @@ public class RpcRequest implements Serializable {
      * 它与 parameterTypes 数组配合使用，确保参数类型和值的正确性
      */
     private Object[] args;
+
+    private String serviceVersion= RpcConstant.DEFAULT_VERSION;
 }
 
