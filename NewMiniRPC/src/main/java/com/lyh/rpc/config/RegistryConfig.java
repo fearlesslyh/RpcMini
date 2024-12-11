@@ -11,6 +11,6 @@ public class RegistryConfig {
     private String username;
     private String password;
     private String applyAddress="http://localhost:2310";
-    private Long time=1000L;
+    private Long time=10000L;
     private String registry="etcd";
 }

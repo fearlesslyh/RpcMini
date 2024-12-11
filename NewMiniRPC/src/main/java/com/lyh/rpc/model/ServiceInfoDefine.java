@@ -1,4 +1,4 @@
-package com.lyh.mini.common.model;
+package com.lyh.rpc.model;
 
 /**
  * @author 梁懿豪
