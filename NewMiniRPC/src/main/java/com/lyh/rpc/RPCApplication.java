@@ -5,8 +5,11 @@ package com.lyh.rpc;
  * @version 1.0
  */
 
+import com.lyh.rpc.config.RegistryConfig;
 import com.lyh.rpc.config.RpcConfig;
 import com.lyh.rpc.constant.RpcConstant;
+import com.lyh.rpc.registry.Registry;
+import com.lyh.rpc.registry.RegistryFactory;
 import com.lyh.rpc.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +36,11 @@ public class RPCApplication {
         rpcConfig=newRpcConfig;
         // 打印日志，记录RPC启动信息
         log.info("RPC启动，配置为 {}",newRpcConfig.toString());
+        //注册中心初始化
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        Registry defaultRegistry = RegistryFactory.getDefaultRegistry(registryConfig.getRegistry());
+        defaultRegistry.init(registryConfig);
+        log.info("注册中心已初始化，配置为 = {}",registryConfig);
     }
 
 

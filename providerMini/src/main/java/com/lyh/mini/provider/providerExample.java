@@ -6,7 +6,14 @@ package com.lyh.mini.provider;
  */
 
 import com.lyh.mini.common.service.UserService;
+import com.lyh.rpc.RPCApplication;
+import com.lyh.rpc.config.RegistryConfig;
+import com.lyh.rpc.config.RpcConfig;
+import com.lyh.rpc.model.ServiceInfoDefine;
 import com.lyh.rpc.registry.LocalRegistry;
+import com.lyh.rpc.registry.Registry;
+import com.lyh.rpc.registry.RegistryFactory;
+import com.lyh.rpc.server.Httpserver;
 import com.lyh.rpc.server.VertxHttpServer;
 
 /**
@@ -15,10 +22,30 @@ import com.lyh.rpc.server.VertxHttpServer;
  */
 public class providerExample {
     public static void main(String[] args) {
-//      注册服务(可以直接调用Local Registry的静态方法,而无需创造实例)
-        LocalRegistry.register(UserService.class.getName(),UserServiceImpl.class);
+        // RPC 框架初始化
+        RPCApplication.initialize();
+        // 注册服务
+        String serviceName = UserService.class.getName();
+        LocalRegistry.register(serviceName, UserServiceImpl.class);
+        // 注册服务到注册中心
+        RpcConfig rpcConfig = RPCApplication.getInstance();
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        Registry registry = RegistryFactory.getDefaultRegistry(registryConfig.getRegistry());
+        ServiceInfoDefine serviceMetaInfo = new ServiceInfoDefine();
+        serviceMetaInfo.setServiceName(serviceName);
+        serviceMetaInfo.setServiceHost(rpcConfig.getServerHost());
+        serviceMetaInfo.setServicePort(rpcConfig.getServerPort());
+        try {
+            registry.registry(serviceMetaInfo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
 //        启动web服务
         new VertxHttpServer().start(8080);
         System.out.println("启动成功");
+//        // 启动 web 服务
+//        Httpserver httpServer = new VertxHttpServer();
+//        httpServer.start(RPCApplication.getInstance().getServerPort());
     }
 }
