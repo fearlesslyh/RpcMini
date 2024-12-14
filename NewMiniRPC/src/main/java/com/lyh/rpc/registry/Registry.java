@@ -10,10 +10,34 @@ import java.util.List;
  * @version 1.3
  */
 public interface Registry {
+    /**
+     *
+     * @param registryConfig  初始化注册中心配置
+     */
     void init(RegistryConfig registryConfig);
-    void registry(ServiceInfoDefine serviceInfoDefine)throws Exception;
-    void Logout(ServiceInfoDefine serviceInfoDefine);
-    List<ServiceInfoDefine> serviceDiscovery(String serviceKeyName);
-    void destroy();
 
+    /**
+     *
+     * @param serviceInfoDefine 注册服务信息
+     * @throws Exception
+     */
+    void registry(ServiceInfoDefine serviceInfoDefine)throws Exception;
+
+    /**
+     *
+     * @param serviceInfoDefine 注销服务
+     */
+    void Logout(ServiceInfoDefine serviceInfoDefine);
+
+    /**
+     *
+     * @param serviceKeyName 根据服务名称发现服务信息
+     * @return
+     */
+    List<ServiceInfoDefine> serviceDiscovery(String serviceKeyName);
+
+    /**
+     * 销毁
+     */
+    void destroy();
 }

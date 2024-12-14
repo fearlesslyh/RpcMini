@@ -17,7 +17,9 @@ public class consumerExample {
         //静态代理
 //        UserService userService =  new UserServiceProxy();
 //        动态代理
-        UserService userService = ServiceProxyFactory.getProxy(UserService.class);
+        UserService userService = Ser// 定义服务版本，默认为RpcConstant.DEFAULT_VERSION
+    private String serviceVersion= RpcConstant.DEFAULT_VERSION;
+viceProxyFactory.getProxy(UserService.class);
         User user = new User();
         user.setName("无畏");
         User newUser = userService.getUser(user);

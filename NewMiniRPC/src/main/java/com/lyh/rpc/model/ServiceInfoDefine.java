@@ -12,11 +12,11 @@ public class ServiceInfoDefine {
     private String serviceGroup="default";
 
     public String getKey(){
-        return String.format("%s %s %s",ServiceName,serviceVersion,serviceGroup);
+        return String.format("%s:%s:%s",ServiceName,serviceVersion,serviceGroup);
     }
 
     public  String getServiceKeys(){
-        return  String.format("%s %s %s", getKey(), serviceHost, serviceHost);
+        return  String.format("%s/%s:%s", getKey(), serviceHost, servicePort);
     }
 
 

@@ -32,6 +32,7 @@ public class RpcConfig {
     //序列化器
     private String Serializer = SerializerCommons.JDK;
 
+    // 定义一个RegistryConfig类型的变量registryConfig，注册中心的配置
     private RegistryConfig registryConfig = new RegistryConfig();
 
 }

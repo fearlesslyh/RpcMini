@@ -48,6 +48,7 @@ public class RpcRequest implements Serializable {
      */
     private Object[] args;
 
+    // 定义一个私有字符串变量serviceVersion，初始值为RpcConstant.DEFAULT_VERSION
     private String serviceVersion= RpcConstant.DEFAULT_VERSION;
 }
 
