@@ -41,6 +41,8 @@ public class RPCApplication {
         Registry defaultRegistry = RegistryFactory.getDefaultRegistry(registryConfig.getRegistry());
         defaultRegistry.init(registryConfig);
         log.info("注册中心已初始化，配置为 = {}",registryConfig);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(defaultRegistry::destroy));
     }
 
 

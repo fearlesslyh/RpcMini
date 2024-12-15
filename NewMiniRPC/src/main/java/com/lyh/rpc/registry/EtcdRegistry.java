@@ -1,5 +1,8 @@
 package com.lyh.rpc.registry;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.cron.CronUtil;
+import cn.hutool.cron.task.Task;
 import cn.hutool.json.JSONUtil;
 import io.etcd.jetcd.*;
 import com.lyh.rpc.config.RegistryConfig;
@@ -9,7 +12,9 @@ import io.etcd.jetcd.options.PutOption;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +28,11 @@ public class EtcdRegistry implements Registry {
      * 根节点
      */
     private static final String ETCD_ROOT_PATH = "/RPC/";
+    /**
+     * 本机注册的节点 key 集合（用于维护续期）
+     */
+    private final Set<String> localRegisterNodeKeySet = new HashSet<>();
+
 
     /**
      *
@@ -35,6 +45,7 @@ public class EtcdRegistry implements Registry {
                 .connectTimeout(Duration.ofMillis(registryConfig.getTime()))
                 .build();
         kvClient = client.getKVClient();
+        heartBeat();
     }
 
     /**
@@ -67,6 +78,9 @@ public class EtcdRegistry implements Registry {
                 .build();
         // 使用kvClient将key和value存入数据库，并使用putOption设置参数
         kvClient.put(key, value, putOption).get();
+        //添加节点信息到本地缓存
+        localRegisterNodeKeySet.add(registerKey);
+
     }
 
     /**
@@ -75,7 +89,10 @@ public class EtcdRegistry implements Registry {
      */
     @Override
     public void Logout(ServiceInfoDefine serviceInfoDefine) {
-        kvClient.delete(ByteSequence.from(ETCD_ROOT_PATH + serviceInfoDefine.getServiceKeys(), StandardCharsets.UTF_8));
+        String registerKey = ETCD_ROOT_PATH + serviceInfoDefine.getServiceKeys();
+        kvClient.delete(ByteSequence.from(registerKey, StandardCharsets.UTF_8));
+
+        localRegisterNodeKeySet.remove(registerKey);
 
     }
 
@@ -123,6 +140,15 @@ public class EtcdRegistry implements Registry {
     @Override
     public void destroy() {
         System.out.println("当前节点下线");
+
+        for(String key:localRegisterNodeKeySet){
+            try {
+                kvClient.delete(ByteSequence.from(key,StandardCharsets.UTF_8)).get();
+            }catch (Exception e){
+                throw new RuntimeException(key+"节点下线失败");
+            }
+        }
+
         // 释放资源
         if (kvClient != null) {
             kvClient.close();
@@ -130,5 +156,31 @@ public class EtcdRegistry implements Registry {
         if (client != null) {
             client.close();
         }
+    }
+
+    @Override
+    public void heartBeat() {
+        CronUtil.schedule("*/10 * * * * *", (Task) () -> {
+            for (String key: localRegisterNodeKeySet){
+                try {
+                    List<KeyValue> keyValues = kvClient.get(ByteSequence.from(key, StandardCharsets.UTF_8))
+                            .get()
+                            .getKvs();
+                    if(CollUtil.isEmpty(keyValues)){
+                        continue;
+                    }
+                    //节点未过期，重新注册，相当于续期
+                    KeyValue keyValue = keyValues.get(0);
+                    String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
+                    ServiceInfoDefine serviceInfoDefine = JSONUtil.toBean(value, ServiceInfoDefine.class);
+                    registry(serviceInfoDefine);
+                }catch (Exception e){
+                    throw new RuntimeException(key+ " 续签失败 "+ e);
+                }
+            }
+        });
+        // 支持秒级别定时任务
+        CronUtil.setMatchSecond(true);
+        CronUtil.start();
     }
 }
