@@ -10,7 +10,15 @@ import java.util.List;
  */
 public class RegistryCache {
     List<ServiceInfoDefine>serviceCache;
-    void add(){
 
+    void writeCache(List<ServiceInfoDefine>newServiceCache){
+        this.serviceCache=newServiceCache;
+    }
+    List<ServiceInfoDefine> read(){
+        return this.serviceCache;
+    }
+
+    void delete(){
+        this.serviceCache=null;
     }
 }

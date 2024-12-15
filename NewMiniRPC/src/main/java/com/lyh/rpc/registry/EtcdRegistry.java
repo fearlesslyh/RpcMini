@@ -1,6 +1,7 @@
 package com.lyh.rpc.registry;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
 import cn.hutool.json.JSONUtil;
@@ -9,6 +10,7 @@ import com.lyh.rpc.config.RegistryConfig;
 import com.lyh.rpc.model.ServiceInfoDefine;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
+import io.etcd.jetcd.watch.WatchEvent;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -28,15 +30,24 @@ public class EtcdRegistry implements Registry {
      * 根节点
      */
     private static final String ETCD_ROOT_PATH = "/RPC/";
+
     /**
      * 本机注册的节点 key 集合（用于维护续期）
      */
     private final Set<String> localRegisterNodeKeySet = new HashSet<>();
 
+    /**
+     * 注册中心服务缓存
+     */
+    private final RegistryCache registryCache = new RegistryCache();
 
     /**
-     *
-     * @param registryConfig  初始化注册中心配置
+     * 正在监听的 key 集合
+     */
+    private final Set<String> watchKeySet = new ConcurrentHashSet<>();
+
+    /**
+     * @param registryConfig 初始化注册中心配置
      */
     @Override
     public void init(RegistryConfig registryConfig) {
@@ -49,7 +60,6 @@ public class EtcdRegistry implements Registry {
     }
 
     /**
-     *
      * @param serviceInfoDefine 注册服务信息
      * @throws Exception
      */
@@ -84,7 +94,6 @@ public class EtcdRegistry implements Registry {
     }
 
     /**
-     *
      * @param serviceInfoDefine 注销服务
      */
     @Override
@@ -97,19 +106,22 @@ public class EtcdRegistry implements Registry {
     }
 
     /**
-     *
      * @param serviceKeyName 根据服务名称发现服务信息
      * @return
      */
     @Override
     public List<ServiceInfoDefine> serviceDiscovery(String serviceKeyName) {
+        List<ServiceInfoDefine> cacheList = registryCache.read();
+        if (cacheList != null) {
+            return cacheList;
+        }
+
         // 前缀搜索，结尾一定要加 '/'
         String searchPrefix = ETCD_ROOT_PATH + serviceKeyName + "/";
-
         try {
             // 前缀查询
             // 创建一个GetOption对象，设置isPrefix为true
-  GetOption getOption = GetOption.builder()
+            GetOption getOption = GetOption.builder()
                     .isPrefix(true)
                     .build();
             // 使用kvClient的get方法，传入ByteSequence对象和GetOption对象，获取keyValues列表
@@ -120,15 +132,21 @@ public class EtcdRegistry implements Registry {
                     .getKvs();
             // 解析服务信息
             // 将keyValues流中的每个keyValue对象转换为ServiceInfoDefine对象，并收集到一个List中
-       return keyValues.stream()
+            List<ServiceInfoDefine> InfoList = keyValues.stream()
                     // 将keyValue键值对象中的value属性转换为字符串
                     .map(keyValue -> {
+                        String key = keyValue.getKey().toString(StandardCharsets.UTF_8);
+                        watch(key);
                         String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
                         // 将字符串转换为ServiceInfoDefine对象
                         return JSONUtil.toBean(value, ServiceInfoDefine.class);
                     })
                     // 将转换后的ServiceInfoDefine对象收集到一个List中
                     .collect(Collectors.toList());
+
+            //写入服务缓存
+            registryCache.writeCache(InfoList);
+            return InfoList;
         } catch (Exception e) {
             throw new RuntimeException("获取服务列表失败", e);
         }
@@ -141,11 +159,11 @@ public class EtcdRegistry implements Registry {
     public void destroy() {
         System.out.println("当前节点下线");
 
-        for(String key:localRegisterNodeKeySet){
+        for (String key : localRegisterNodeKeySet) {
             try {
-                kvClient.delete(ByteSequence.from(key,StandardCharsets.UTF_8)).get();
-            }catch (Exception e){
-                throw new RuntimeException(key+"节点下线失败");
+                kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8)).get();
+            } catch (Exception e) {
+                throw new RuntimeException(key + "节点下线失败");
             }
         }
 
@@ -161,12 +179,12 @@ public class EtcdRegistry implements Registry {
     @Override
     public void heartBeat() {
         CronUtil.schedule("*/10 * * * * *", (Task) () -> {
-            for (String key: localRegisterNodeKeySet){
+            for (String key : localRegisterNodeKeySet) {
                 try {
                     List<KeyValue> keyValues = kvClient.get(ByteSequence.from(key, StandardCharsets.UTF_8))
                             .get()
                             .getKvs();
-                    if(CollUtil.isEmpty(keyValues)){
+                    if (CollUtil.isEmpty(keyValues)) {
                         continue;
                     }
                     //节点未过期，重新注册，相当于续期
@@ -174,13 +192,41 @@ public class EtcdRegistry implements Registry {
                     String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
                     ServiceInfoDefine serviceInfoDefine = JSONUtil.toBean(value, ServiceInfoDefine.class);
                     registry(serviceInfoDefine);
-                }catch (Exception e){
-                    throw new RuntimeException(key+ " 续签失败 "+ e);
+                } catch (Exception e) {
+                    throw new RuntimeException(key + " 续签失败 " + e);
                 }
             }
         });
         // 支持秒级别定时任务
         CronUtil.setMatchSecond(true);
         CronUtil.start();
+    }
+
+    /**
+     * 监听（消费端）
+     *
+     * @param serviceNodeKey
+     */
+    @Override
+    public void watch(String serviceNodeKey) {
+        Watch watchClient = client.getWatchClient();
+        //之前没有被监听，现在开始监听
+        boolean add = watchKeySet.add(serviceNodeKey);
+        if (add) {
+            watchClient.watch(ByteSequence.from(serviceNodeKey, StandardCharsets.UTF_8), response -> {
+                for (WatchEvent event : response.getEvents()) {
+                    switch (event.getEventType()) {
+                        // key 删除时触发
+                        case DELETE:
+                            // 清理注册服务缓存
+                            registryCache.delete();
+                            break;
+                        case PUT:
+                        default:
+                            break;
+                    }
+                }
+            });
+        }
     }
 }
