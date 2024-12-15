@@ -49,16 +49,24 @@ public class ServiceProxy implements InvocationHandler {
             byte[] bodyBytes = serializer.serialize(rpcRequest);
 
             // 从注册中心获取服务提供者请求地址
-            RpcConfig rpcConfig = RPCApplication.getInstance();
-            Registry registry = RegistryFactory.getDefaultRegistry(rpcConfig.getRegistryConfig().getRegistry());
-            ServiceInfoDefine serviceMetaInfo = new ServiceInfoDefine();
-            serviceMetaInfo.setServiceName(serviceName);
-            serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_VERSION);
-            List<ServiceInfoDefine> serviceMetaInfoList = registry.serviceDiscovery(serviceMetaInfo.getKey());
-            if (CollUtil.isEmpty(serviceMetaInfoList)) {
-                throw new RuntimeException("暂无服务地址");
-            }
-            ServiceInfoDefine selectedServiceMetaInfo = serviceMetaInfoList.get(0);
+            // 获取RPC配置
+      RpcConfig rpcConfig = RPCApplication.getInstance();
+      // 获取默认的注册中心
+      Registry registry = RegistryFactory.getDefaultRegistry(rpcConfig.getRegistryConfig().getRegistry());
+      // 创建服务信息定义
+      ServiceInfoDefine serviceMetaInfo = new ServiceInfoDefine();
+      // 设置服务名称
+      serviceMetaInfo.setServiceName(serviceName);
+      // 设置服务版本
+      serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_VERSION);
+      // 根据服务信息定义获取服务列表
+      List<ServiceInfoDefine> serviceMetaInfoList = registry.serviceDiscovery(serviceMetaInfo.getKey());
+      // 如果服务列表为空，则抛出异常
+      if (CollUtil.isEmpty(serviceMetaInfoList)) {
+          throw new RuntimeException("暂无服务地址");
+      }
+      // 获取第一个服务信息定义
+      ServiceInfoDefine selectedServiceMetaInfo = serviceMetaInfoList.get(0);
 
             // 发送请求
             try (HttpResponse httpResponse = HttpRequest.post(selectedServiceMetaInfo.getAddress())
