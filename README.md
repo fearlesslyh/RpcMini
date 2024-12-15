@@ -47,7 +47,7 @@
 
 ### 目录
 
-![image](https://github.com/fearlesslyh/RpcMini/blob/main/photo/1732977584041.png)
+![image](photo/1732977584041.png)
 
 1. commonMini 公共模块
 2. consumerMini 服务消费者模块
@@ -65,9 +65,9 @@
 
 服务提供者和消费者都要启动
 
-![image](https://github.com/fearlesslyh/RpcMini/blob/main/photo/1732977939424.png)
+![image](photo/1732977939424.png)
 
-![image](https://github.com/fearlesslyh/RpcMini/blob/main/photo/1732977964545.png)
+![image](photo/1732977964545.png)
 
 ### 故障和错误
 
