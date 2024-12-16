@@ -14,6 +14,7 @@ import com.lyh.rpc.registry.LocalRegistry;
 import com.lyh.rpc.registry.Registry;
 import com.lyh.rpc.registry.RegistryFactory;
 import com.lyh.rpc.server.Httpserver;
+import com.lyh.rpc.server.TCP.VertxTcpServer;
 import com.lyh.rpc.server.VertxHttpServer;
 
 /**
@@ -24,9 +25,11 @@ public class providerExample {
     public static void main(String[] args) {
         // RPC 框架初始化
         RPCApplication.initialize();
+
         // 注册服务
         String serviceName = UserService.class.getName();
         LocalRegistry.register(serviceName, UserServiceImpl.class);
+
         // 注册服务到注册中心
         RpcConfig rpcConfig = RPCApplication.getInstance();
         RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
@@ -41,9 +44,9 @@ public class providerExample {
             throw new RuntimeException(e);
         }
 
-//        启动web服务
-        new VertxHttpServer().start(8080);
-        System.out.println("启动成功");
+        // 启动 TCP 服务
+        VertxTcpServer vertxTcpServer = new VertxTcpServer();
+        vertxTcpServer.start(8080);
 //        // 启动 web 服务
 //        Httpserver httpServer = new VertxHttpServer();
 //        httpServer.start(RPCApplication.getInstance().getServerPort());
