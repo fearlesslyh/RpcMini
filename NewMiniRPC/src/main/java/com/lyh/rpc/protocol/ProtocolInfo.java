@@ -15,6 +15,7 @@ public class ProtocolInfo<T> {
     private Header header;
     private T body;
 
+@Data
     public static class Header {
         private byte Magic;
         private byte version;
