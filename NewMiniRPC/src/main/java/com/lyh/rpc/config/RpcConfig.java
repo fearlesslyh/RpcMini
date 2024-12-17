@@ -1,5 +1,6 @@
 package com.lyh.rpc.config;
 
+import com.lyh.rpc.loadBalancer.LoadBalancerKeys;
 import com.lyh.rpc.serializer.SerializerCommons;
 import com.lyh.rpc.serializer.SerializerFactory;
 import lombok.Data;
@@ -34,5 +35,10 @@ public class RpcConfig {
 
     // 定义一个RegistryConfig类型的变量registryConfig，注册中心的配置
     private RegistryConfig registryConfig = new RegistryConfig();
+
+    /**
+     * 负载均衡器
+     */
+    private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
 
 }
