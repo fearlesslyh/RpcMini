@@ -7,6 +7,7 @@ package com.lyh.mini.consumer;
 
 import com.lyh.mini.common.model.User;
 import com.lyh.mini.common.service.UserService;
+import com.lyh.rpc.bootstrap.ConsumerBootstrap;
 import com.lyh.rpc.proxy.ServiceProxyFactory;
 
 /**
@@ -14,19 +15,19 @@ import com.lyh.rpc.proxy.ServiceProxyFactory;
  */
 public class consumerExample {
     public static void main(String[] args) {
-        //静态代理
-//        UserService userService =  new UserServiceProxy();
-//        动态代理
+        // 服务提供者初始化
+        ConsumerBootstrap.init();
+
+        // 获取代理
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User user = new User();
-        user.setName("无畏");
+        user.setName("梁懿豪");
+        // 调用
         User newUser = userService.getUser(user);
-        if (newUser !=null) {
+        if (newUser != null) {
             System.out.println(newUser.getName());
-        }else {
-            System.out.println("用户不存在");
+        } else {
+            System.out.println("user == null");
         }
-        long number = userService.getNumber();
-        System.out.println(number);
     }
 }
