@@ -1,5 +1,6 @@
 package com.lyh.rpc.config;
 
+import com.lyh.rpc.fault.retry.RetryMechanismKeys;
 import com.lyh.rpc.loadBalancer.LoadBalancerKeys;
 import com.lyh.rpc.serializer.SerializerCommons;
 import com.lyh.rpc.serializer.SerializerFactory;
@@ -40,5 +41,9 @@ public class RpcConfig {
      * 负载均衡器
      */
     private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
+    /**
+     * 重试策略
+     */
+    private String retryStrategy = RetryMechanismKeys.NO;
 
 }

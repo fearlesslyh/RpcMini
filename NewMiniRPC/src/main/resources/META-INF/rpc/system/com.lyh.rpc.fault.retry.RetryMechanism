@@ -1,0 +1,2 @@
+no=com.lyh.rpc.fault.retry.NoRetryMechanism
+fixedInterval=com.lyh.rpc.fault.retry.FixedIntervalRetryMechanism
