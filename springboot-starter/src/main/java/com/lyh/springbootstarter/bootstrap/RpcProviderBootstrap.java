@@ -8,6 +8,7 @@ import com.lyh.rpc.registry.LocalRegistry;
 import com.lyh.rpc.registry.Registry;
 import com.lyh.rpc.registry.RegistryFactory;
 import com.lyh.springbootstarter.annotation.RpcService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * @author 梁懿豪
  * @version 1.3
  */
+@Slf4j
 public class RpcProviderBootstrap implements BeanPostProcessor {
     /**
      * Bean 初始化后执行，注册服务

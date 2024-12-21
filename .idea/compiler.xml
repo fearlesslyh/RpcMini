@@ -15,16 +15,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="NewMiniRPC" />
-        <module name="providerMini" />
+        <module name="springboot-consumer-1" />
         <module name="consumerMini" />
         <module name="commonMini" />
-        <module name="miniRPC" />
         <module name="springboot-starter" />
+        <module name="NewMiniRPC" />
+        <module name="providerMini" />
+        <module name="miniRPC" />
+        <module name="springboot-provider-1" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="RPC_mini" target="1.8" />
+      <module name="springboot-consumer" target="1.8" />
+      <module name="springboot-provider" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
