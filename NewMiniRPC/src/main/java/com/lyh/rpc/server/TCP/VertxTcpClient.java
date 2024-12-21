@@ -1,6 +1,7 @@
 package com.lyh.rpc.server.TCP;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 
 /**
  * @author 梁懿豪
@@ -13,16 +14,23 @@ public class VertxTcpClient {
 
         vertx.createNetClient().connect(8888, "localhost", result -> {
             if (result.succeeded()) {
-                System.out.println("连接到TCP服务器");
+                System.out.println("Connected to TCP server");
                 io.vertx.core.net.NetSocket socket = result.result();
-                // 发送数据
-                socket.write("Hello, 服务器!");
+                for (int i = 0; i < 1000; i++) {
+                    // 发送数据
+                    Buffer buffer = Buffer.buffer();
+                    String str = "Hello, server!Hello, server!Hello, server!Hello, server!";
+                    buffer.appendInt(0);
+                    buffer.appendInt(str.getBytes().length);
+                    buffer.appendBytes(str.getBytes());
+                    socket.write(buffer);
+                }
                 // 接收响应
                 socket.handler(buffer -> {
-                    System.out.println("从服务器收到响应: " + buffer.toString());
+                    System.out.println("Received response from server: " + buffer.toString());
                 });
             } else {
-                System.err.println("连接TCP服务器失败");
+                System.err.println("Failed to connect to TCP server");
             }
         });
     }
